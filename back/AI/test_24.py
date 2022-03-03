@@ -11,7 +11,6 @@ import numpy as np
 from decimal import *
 from multiprocessing import Pool
 import time
-from natsort import natsorted
 
 
 def dct2(a):
@@ -162,7 +161,7 @@ def histg(img):
 
 
 def main():
-    images = natsorted(glob.glob("../{0}/*".format(sys.argv[4]), recursive=True))
+    images = sorted(glob.glob("../{0}/*".format(sys.argv[4]), recursive=True))
     start = time.time()
     with Pool(8) as p:
         p.map(histg, images)

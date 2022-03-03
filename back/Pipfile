@@ -5,6 +5,11 @@ name = "pypi"
 
 [packages]
 flask-cors = "*"
+numpy = "*"
+opencv-python = "*"
+scipy = "*"
+keras = "*"
+tensorflow = "*"
 
 [dev-packages]
 
