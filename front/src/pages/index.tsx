@@ -1,4 +1,4 @@
-import { Center, Container, Button, Input } from "@chakra-ui/react";
+import { Center, Container, Button, Input, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useState, useContext } from "react";
 import axios from "axios";
@@ -19,17 +19,22 @@ export default function Home() {
   };
 
   return (
-    <Container>
-      <Center bg="tomato" h="100px" color="white" fontSize="30">
+    <VStack spacing={10}>
+      <Center bg="tomato" h="100px" w="full" color="white" fontSize="30">
         Portfolio
       </Center>
+      <Container>
+        当サイトはJPEG画像が加工されているかどうかをAIによって調べさせるサイトです．画像を入力し，加工されているか否かを判別させてみましょう．
+      </Container>
       <form onSubmit={ok}>
         <Input
           type="file"
           onChange={(e: any) => setFile(e.target.files[0])}
         ></Input>
-        <Button type="submit">選択</Button>
+        <Button colorScheme="orange" m="4" type="submit" variant="outline">
+          決定
+        </Button>
       </form>
-    </Container>
+    </VStack>
   );
 }
