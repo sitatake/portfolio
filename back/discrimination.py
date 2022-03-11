@@ -4,18 +4,17 @@ import cv2
 import itertools
 import numpy as np
 
-img_path ='./uploads/APEXhai.jpg'
-
 def div(path):
     n= cv2.imread(path)
+
     # 画像のサイズを取得
     h, w, c = n.shape
-    margin_h = h - 128
-    margin_w = w - 128
+    margin_h = h - 512
+    margin_w = w - 512
     start_h = int(margin_h/2)
     start_w = int(margin_w/2)
-    div_img = np.zeros((128,128,3))
-    for p,q in itertools.product(range(128), range(128)):
+    div_img = np.zeros((512,512,3))
+    for p,q in itertools.product(range(512), range(512)):
         div_img[p][q] = n[p+start_h][q+start_w]
     return div_img
 
@@ -165,51 +164,56 @@ def histg(img,hist_len):
         with open("error.txt", "a") as f:
             f.write('error')
 
-# hist_len = int(sys.argv[2])
-hist_len = 40
-hist = histg('./uploads/APEXhai.jpg',hist_len)
-print(hist)
+img_path ='./uploads/'
+
+def discriminate(path):
+
+    # hist_len = int(sys.argv[2])
+    hist_len = 40
+    hist = histg(img_path+path,hist_len)
 
 
-import numpy as np
-import time
-from keras.models import Sequential, model_from_json
-from keras.layers import Dense, Activation, Conv2D, MaxPooling2D, Flatten, Dropout
-import sys
-import csv
-import tensorflow as tf
+    import numpy as np
+    import time
+    from keras.models import Sequential, model_from_json
+    from keras.layers import Dense, Activation, Conv2D, MaxPooling2D, Flatten, Dropout
+    import sys
+    import csv
+    import tensorflow as tf
 
 
-# config = tf.compat.v1.ConfigProto()
-# config.gpu_options.per_process_gpu_memory_fraction = 0.4
-# sess = tf.compat.v1.Session(config=config)
-# tf.compat.v1.keras.backend.set_session(sess)
+    # config = tf.compat.v1.ConfigProto()
+    # config.gpu_options.per_process_gpu_memory_fraction = 0.4
+    # sess = tf.compat.v1.Session(config=config)
+    # tf.compat.v1.keras.backend.set_session(sess)
 
-model = Sequential()
-model.add(Conv2D(filters=100, kernel_size=(3,3), input_shape=(1,11,81), strides=1, data_format='channels_first'))
-model.add(MaxPooling2D(pool_size=(2,2), strides=2))
-model.add(Conv2D(filters=100, kernel_size=(3,3), strides=1))
-model.add(MaxPooling2D(pool_size=(2,2), strides=2))
-model.add(Flatten())
-model.add(Dense(100, activation='elu'))
-model.add(Dropout(0.5))
-model.add(Dense(100, activation='elu'))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid'))
-model.load_weights("./AI/model_128_24_1_2d.hdf5")
-model.compile('Adam', loss='binary_crossentropy', metrics=['accuracy'])
-model.summary()
+    model = Sequential()
+    model.add(Conv2D(filters=100, kernel_size=(3,3), input_shape=(11,81,1), strides=1, data_format='channels_last'))
+    model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+    model.add(Conv2D(filters=100, kernel_size=(3,3), strides=1))
+    model.add(MaxPooling2D(pool_size=(2,2), strides=2))
+    model.add(Flatten())
+    model.add(Dense(100, activation='elu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(100, activation='elu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1, activation='sigmoid'))
+    model.load_weights("./AI/model_512_24_1_2d.hdf5")
+    model.compile('Adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.summary()
 
-# y_test = np.array(np.loadtxt("lb_ec30000_alt.csv", delimiter=","), dtype = 'int64')
-data = np.array(hist)
-x_test = np.reshape(data, (1,1,11,81))
+    # y_test = np.array(np.loadtxt("lb_ec30000_alt.csv", delimiter=","), dtype = 'int64')
+    data = np.array(hist)
+    x_test = np.reshape(data, (1,11,81,1))
 
-# print(image.shape)
-# predictions = model.predict(image)
-# aveoff = sum(predictions) / len(predictions)
-# print(aveoff)
+    # print(image.shape)
+    # predictions = model.predict(image)
+    # aveoff = sum(predictions) / len(predictions)
+    # print(aveoff)
 
-result = model.predict(x_test)
+    result = model.predict(x_test)
 
-print(type(result))
+    # print(type(result))
+    # print("この画像が加工されている可能性は{:.3f}％です！".format(result[0][0]))
+    return "{:.3f}".format(result[0][0]*100)
 

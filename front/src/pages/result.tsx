@@ -24,7 +24,7 @@ export default function Home() {
       <Center bg="tomato" h="100px" w="full" color="white" fontSize="30">
         Portfolio
       </Center>
-      <Center p="10">画像の名前は{result}です！</Center>
+      <Center p="10">この画像が加工されている可能性は{result}％です！</Center>
       <Button colorScheme="orange" variant="outline" onClick={back}>
         戻る
       </Button>

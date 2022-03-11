@@ -3,6 +3,7 @@ import os
 from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from flask_cors import CORS, cross_origin
+from discrimination import discriminate
 
 
 UPLOAD_FOLDER = 'uploads'
@@ -79,6 +80,8 @@ def create_app(test_config=None):
 
     @app.route('/uploads/<name>')
     def download_file(name):
-        return name
+        result = discriminate(name)
+        print(result)
+        return result
 
     return app
